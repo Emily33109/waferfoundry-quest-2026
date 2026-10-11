@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wafer Foundry Quest｜晶圓代工冒險</title>
+<style>
+:root{--navy:#071a36;--blue:#0787ff;--cyan:#54e7ff;--panel:#102e52;--ink:#10233d;--gold:#ffbd45}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#174d7e,#07162c 70%);color:#fff;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:10px 14px;font-weight:800;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible{outline:3px solid #ffe17b}
+header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 18px;flex-wrap:wrap;background:#07152af2;border-bottom:1px solid #1e9cff}
+.brand{font-size:clamp(18px,3vw,28px);font-weight:900}.brand small{display:block;font-size:13px;color:#bdefff}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#102c4c;border:1px solid #258dce;border-radius:10px;padding:7px 12px;text-align:center;min-width:78px}.stat b{display:block;font-size:18px;color:#6fe6ff}.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.8fr);gap:14px;padding:14px;max-width:1400px;margin:auto}
+.factory{min-height:490px;border:2px solid #168ce4;border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(145deg,#254f70,#10263d 55%,#081b30);box-shadow:0 0 30px #007eff35}
+.factory:before{content:"";position:absolute;inset:0;background:linear-gradient(30deg,transparent 48%,#68d8ff17 49%,transparent 50%),linear-gradient(150deg,transparent 48%,#68d8ff17 49%,transparent 50%);background-size:80px 80px;pointer-events:none}
+.factory-top{position:relative;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}.pill{background:#061b32cc;border:1px solid #4cbbff;border-radius:999px;padding:7px 12px;font-size:13px}
+.stations{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px 14px 0}
+.station{padding:10px 4px;border:2px solid var(--c);background:color-mix(in srgb,var(--c) 20%,#081b32);border-radius:12px;text-align:center;min-height:76px;color:white}.station .num{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:50%;background:var(--c);color:#06152b;margin-bottom:5px}.station.active{box-shadow:0 0 20px var(--c);transform:translateY(-4px)}.station.done{background:#0c633f;border-color:#6dffb3}
+.machine-row{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px 14px}.machine{height:105px;border:2px solid #7198b5;border-radius:12px;background:linear-gradient(#7d9cb2,#243e59 48%,#0d243b);display:grid;place-items:center;position:relative}.machine:before{content:"";position:absolute;top:8px;left:10%;width:80%;height:8px;background:#b8dff7;border-radius:4px}.wafer{width:58px;height:58px;border-radius:50%;border:3px solid #d4e8f3;background:repeating-linear-gradient(0deg,#c5d2db,#c5d2db 2px,#9aafbd 3px,#dfeaf0 4px);box-shadow:0 0 15px #6bdfff80}.machine small{position:absolute;bottom:4px;font-size:10px;color:#e6f7ff}
+.avatar-area{position:relative;display:flex;align-items:center;gap:12px;padding:16px 22px;min-height:110px}.avatar{font-size:52px;filter:drop-shadow(0 4px 0 #0004)}.bot{font-size:45px}.speech{background:#f6fbff;color:#14283e;border-radius:16px;padding:12px 16px;max-width:600px;font-weight:650;box-shadow:0 4px 0 #0002}.speech small{display:block;color:#38536d;margin-top:5px;font-weight:500}
+.controls{display:flex;justify-content:space-between;gap:12px;align-items:end;padding:0 18px 16px;position:relative}.dpad{display:grid;grid-template-columns:repeat(3,40px);gap:4px}.dpad button{padding:7px;background:#0d3356;color:white;border:1px solid #50bfff}.dpad button:nth-child(1){grid-column:2}.dpad button:nth-child(2){grid-column:1;grid-row:2}.dpad button:nth-child(3){grid-column:2;grid-row:2}.dpad button:nth-child(4){grid-column:3;grid-row:2}.dpad button:nth-child(5){grid-column:2;grid-row:3}
+.panel{background:#f6faff;color:var(--ink);border-radius:18px;padding:18px;box-shadow:0 12px 28px #0004;min-height:490px}.panel h2{margin:0 0 8px;font-size:22px}.muted{color:#55708a}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.primary{background:linear-gradient(#ffc957,#ff9e1b);color:#1b2b3a;box-shadow:0 3px 0 #bc7113}.secondary{background:#dceeff;color:#12436c}.quiz{margin-top:14px;padding:14px;background:#eaf4ff;border-radius:14px;border:1px solid #c6e3ff}.qtitle{font-size:18px;font-weight:850;margin:8px 0}.options{display:grid;gap:8px;margin-top:12px}.option{background:white;border:2px solid #c9d9e8;color:#17314a;text-align:left}.option.selected{border-color:#268dff;background:#dceeff}.option.correct{border-color:#1aaf65;background:#d6f9e7}.option.wrong{border-color:#e34e57;background:#ffe0e1}.feedback{font-weight:750;margin-top:10px}.feedback.good{color:#087b45}.feedback.bad{color:#b52b34}.hidden{display:none!important}.word{display:inline-block;background:#d9f5ff;border-radius:5px;padding:1px 5px}.list{padding-left:20px}.list li{margin:7px 0}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{background:#dceeff;color:#164267}.tab.active{background:#176fc2;color:white}.mini{font-size:12px}.progressbar{height:9px;border-radius:9px;background:#dce5ef;overflow:hidden}.progressbar span{display:block;height:100%;width:0;background:#10a5e8;transition:width .25s}
+footer{text-align:center;padding:8px 16px 20px;color:#c0d9ec;font-size:12px}
+@media(max-width:850px){.layout{grid-template-columns:1fr;padding:9px}.factory{min-height:450px}.panel{min-height:0}.stations{gap:4px;padding:6px}.station{font-size:11px;padding:7px 2px}.machine-row{gap:4px;padding:6px}.machine{height:80px}.wafer{width:42px;height:42px}.factory-top{padding:10px}.controls{padding:0 10px 12px}.avatar-area{padding:10px 14px}.speech{font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="brand">▣ Wafer Foundry Quest <small>晶圓代工冒險｜English for Semiconductor Beginners</small></div><div class="stats"><div class="stat">進度<b id="progress">0 / 20</b></div><div class="stat">正確率<b id="accuracy">—</b></div><div class="stat">分數<b id="score">0</b></div><button class="primary" id="exportPdf">匯出答題 PDF</button></div></header>
+<main class="layout">
+<section class="factory">
+ <div class="factory-top"><span class="pill">🏭 SEMICONDUCTOR FAB 半導體工廠</span><span class="pill" id="stationBadge">Station 1 / 5</span></div>
+ <div class="stations" id="stations"></div>
+ <div class="machine-row" id="machines"></div>
+ <div class="avatar-area"><div class="avatar" id="player">🧑🏻‍🔬</div><div class="bot">🤖</div><div class="speech" id="guideText">Welcome to the semiconductor factory!<small>歡迎來到半導體工廠！選擇第一站開始學習。</small></div></div>
+ <div class="controls"><div><div class="pill">移動 Move：W A S D / 方向鍵</div><div class="dpad" aria-label="方向控制"><button data-move="up">▲</button><button data-move="left">◀</button><button data-move="down">▼</button><button data-move="right">▶</button><button data-move="interact">E</button></div></div><div><div class="pill" id="position">位置：入口</div><div class="actions"><button class="secondary" id="speakGuide">🔊 朗讀導覽</button><button class="primary" id="interact">E｜進入關卡</button></div></div></div>
+</section>
+<aside class="panel">
+ <div class="tabs"><button class="tab active" data-tab="learn">學習任務</button><button class="tab" data-tab="dictionary">單字字典</button><button class="tab" data-tab="mistakes">錯題紀錄</button></div>
+ <section id="learn">
+  <h2 id="lessonTitle">Station 1: Thin Film Deposition</h2><div class="muted" id="lessonZh">第一站：薄膜沉積</div>
+  <p id="lessonIntro">A wafer is a thin, round piece of material. We put a thin film on it.</p>
+  <p class="muted" id="lessonTranslation">晶圓是一片薄而圓的材料。我們在上面形成薄膜。</p>
+  <div class="progressbar"><span id="stationProgress"></span></div>
+  <div class="quiz" id="quiz"><div class="muted mini" id="qCount">QUESTION 1 / 4</div><div class="qtitle" id="question">What is a wafer?</div><div class="muted" id="questionZh">什麼是晶圓？</div><div id="answers" class="options"></div><div id="feedback" class="feedback"></div><div class="actions"><button class="secondary" id="hint">💡 提示 Hint</button><button class="secondary" id="hearQuestion">🔊 聽英文</button><button class="primary" id="next" disabled>下一題 Next →</button></div><div class="muted mini" id="hintText"></div></div>
+  <div class="actions"><button class="secondary" id="reviewLesson">重讀本關介紹</button><button class="primary" id="startStation">開始／重新開始本關</button></div>
+ </section>
+ <section id="dictionary" class="hidden"><h2>單字字典 Dictionary</h2><p class="muted">選擇單字聽發音，並查看簡單英文解釋。</p><div id="words"></div></section>
+ <section id="mistakes" class="hidden"><h2>錯題紀錄 My Mistakes</h2><div id="mistakeList" class="muted">目前沒有錯題。</div><button class="secondary" id="clearMistakes">清除錯題紀錄</button></section>
+</aside>
+</main><footer>學習版原型：分數與錯題保存在此瀏覽器。雲端排行榜／Firebase 尚未連接。語音需瀏覽器支援 English text-to-speech。</footer>
+<script>
+const stations=[
+{name:"Thin Film Deposition",zh:"薄膜沉積",color:"#21b7ff",intro:"A wafer is a thin, round piece of material. We put a thin film on it.",introZh:"晶圓是一片薄而圓的材料。我們在上面形成薄膜。",words:["wafer","thin film","deposit","layer"],qs:[
+["What is a wafer?","什麼是晶圓？",["A round piece of material","A robot","A computer game"],0,"A wafer is a thin, round piece of material.","wafer = 晶圓"],
+["A thin film is a ____ layer.","薄膜是一層很薄的____。",["thick","thin","loud"],1,"A thin film is a thin layer.","Look for the word that means「薄的」。"],
+["We ____ a film on the wafer.","我們把薄膜____在晶圓上。",["deposit","eat","drive"],0,"We deposit a film on the wafer.","deposit = 沉積、鍍上"],
+["Choose the correct sentence.","選出正確句子。",["The wafer are round.","The wafer is round.","The wafer am round."],1,"The wafer is round.","A singular subject uses “is”."]]},
+{name:"Photolithography",zh:"微影",color:"#bd72ff",intro:"Photoresist is a light-sensitive material. Light makes a pattern.",introZh:"光阻是一種對光敏感的材料。光線形成圖案。",words:["photoresist","light","pattern","mask"],qs:[
+["What does photoresist react to?","光阻會對什麼產生反應？",["Light","Sound","Water only"],0,"Photoresist reacts to light.","photoresist = 光阻"],
+["Light makes a ____.","光線形成一個____。",["pattern","sandwich","song"],0,"Light makes a pattern.","pattern = 圖案"],
+["Choose the meaning of “mask”.","選出 mask 的意思。",["A tool that blocks light","A kind of food","A person"],0,"A mask can block light in this process.","mask = 光罩"],
+["Fill in: The light is ____.","填空：光線是____的。",["blue","run","wafer"],0,"The light is blue.","“is” 後面可接形容詞。"]]},
+{name:"Etching",zh:"蝕刻",color:"#ffb43b",intro:"Etching removes material. It makes small shapes on a wafer.",introZh:"蝕刻會移除材料，並在晶圓上形成細小形狀。",words:["etch","remove","material","shape"],qs:[
+["What does etching do?","蝕刻會做什麼？",["Remove material","Add music","Wash clothes"],0,"Etching removes material.","remove = 移除"],
+["Etching makes small ____.","蝕刻會形成細小的____。",["shapes","songs","meals"],0,"Etching makes small shapes.","shape = 形狀"],
+["Choose the verb: We ____ material.","選出動詞：我們____材料。",["remove","round","blue"],0,"We remove material.","remove 是動詞。"],
+["The wafer is ____ the machine.","晶圓在機器____。",["in","happy","eat"],0,"The wafer is in the machine.","位置常用 in。"]]},
+{name:"Doping",zh:"摻雜",color:"#5be39a",intro:"Doping adds a small amount of another material. It changes how silicon works.",introZh:"摻雜會加入少量其他材料，改變矽的特性。",words:["doping","silicon","change","small amount"],qs:[
+["What does doping add?","摻雜會加入什麼？",["Another material","A chair","A song"],0,"Doping adds another material.","add = 加入"],
+["Doping can ____ how silicon works.","摻雜可以____矽的運作方式。",["change","sleep","drink"],0,"Doping can change how silicon works.","change = 改變"],
+["Silicon is a type of ____.","矽是一種____。",["material","animal","game"],0,"Silicon is a material.","material = 材料"],
+["Choose the correct word: a ____ amount.","選字：少量的。",["small","tall","fast"],0,"A small amount means a little.","small amount = 少量"]]},
+{name:"CMP",zh:"化學機械研磨",color:"#ff6d83",intro:"CMP makes the wafer surface flat. Flat layers help us make chips.",introZh:"化學機械研磨會讓晶圓表面平坦。平坦的層有助於製作晶片。",words:["flat","surface","polish","chip"],qs:[
+["What does CMP make?","CMP 會讓表面變成怎樣？",["Flat","Loud","Hungry"],0,"CMP makes the wafer surface flat.","flat = 平坦的"],
+["The wafer has a ____.","晶圓有一個____。",["surface","teacher","song"],0,"The wafer has a surface.","surface = 表面"],
+["Choose the meaning of “chip”.","選出 chip 的意思。",["A small electronic device","A large animal","A window"],0,"A chip is a small electronic device.","chip = 晶片"],
+["CMP helps make the surface ____.","CMP 有助於讓表面變得____。",["flat","run","eat"],0,"CMP helps make the surface flat.","flat 是形容詞。"]]}
+];
+const vocab={
+wafer:["晶圓","A thin, round piece of material.","a silicon wafer","The wafer is round."],
+"thin film":["薄膜","A very thin layer on a surface.","deposit a thin film","We add a thin film."],
+deposit:["沉積；鍍上","To put material onto a surface.","deposit a film","We deposit a film on the wafer."],
+layer:["層","One level of material.","a thin layer","The layer is thin."],
+photoresist:["光阻","A material that reacts to light.","coat with photoresist","Photoresist reacts to light."],
+light:["光","Energy that helps us see.","light source","Light makes a pattern."],
+pattern:["圖案","A design or shape.","make a pattern","The pattern is small."],
+mask:["光罩；遮罩","A tool that blocks light in some areas.","use a mask","The mask blocks light."],
+etch:["蝕刻","To remove material from a surface.","etch the wafer","We etch the wafer."],
+remove:["移除","To take something away.","remove material","Etching removes material."],
+material:["材料","What something is made of.","semiconductor material","Silicon is a material."],
+shape:["形狀","The form of something.","small shape","The shape is round."],
+doping:["摻雜","Adding a small amount of another material.","doping process","Doping changes silicon."],
+silicon:["矽","A material used to make many chips.","silicon wafer","Silicon is a material."],
+change:["改變","To make something different.","change how it works","Doping can change silicon."],
+"small amount":["少量","A little quantity of something.","a small amount of","We add a small amount."],
+flat:["平坦的","Smooth and level, not curved or bumpy.","make it flat","The surface is flat."],
+surface:["表面","The outside or top of something.","wafer surface","The wafer has a surface."],
+polish:["研磨；拋光","To make a surface smooth.","polish the surface","We polish the wafer."],
+chip:["晶片","A small electronic device.","computer chip","The chip is small."]
+};
+const memoryStore={};
+function safeGet(key){try{return window.safeGet(key)}catch(e){return Object.prototype.hasOwnProperty.call(memoryStore,key)?memoryStore[key]:null}}
+function safeSet(key,value){try{window.safeSet(key,value)}catch(e){memoryStore[key]=String(value)}}
+function safeRemove(key){try{window.safeRemove(key)}catch(e){delete memoryStore[key]}}
+let currentStation=0,qIndex=0,score=0,answered=0,correct=0,playerX=0,playerY=0,activeTab="learn",mistakes=JSON.parse(safeGet("wfqMistakes")||"[]"),completed=JSON.parse(safeGet("wfqCompleted")||"[]"),answeredIds=JSON.parse(safeGet("wfqAnswered")||"[]"),order=[],answerLog=JSON.parse(safeGet("wfqAnswerLog")||"[]");
+const $=id=>document.getElementById(id);
+function speak(text){if(!("speechSynthesis"in window)){alert("此瀏覽器不支援語音朗讀。");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=.78;u.pitch=1;speechSynthesis.speak(u)}
+function save(){safeSet("wfqMistakes",JSON.stringify(mistakes));safeSet("wfqCompleted",JSON.stringify(completed));safeSet("wfqAnswered",JSON.stringify(answeredIds));safeSet("wfqAnswerLog",JSON.stringify(answerLog))}
+function renderStations(){$("stations").innerHTML=stations.map((s,i)=>`<button class="station ${i===currentStation?"active":""} ${completed.includes(i)?"done":""}" data-station="${i}" style="--c:${s.color}"><span class="num">${i+1}</span><br>${s.name}<br><small>${s.zh}</small></button>`).join("");$("machines").innerHTML=stations.map((s,i)=>`<div class="machine" style="border-color:${s.color}"><div class="wafer"></div><small>${completed.includes(i)?"✓ 完成":`Station ${i+1}`}</small></div>`).join("");document.querySelectorAll("[data-station]").forEach(b=>b.onclick=()=>selectStation(+b.dataset.station))}
+function selectStation(i){currentStation=i;qIndex=0;order=stations[i].qs.map((_,n)=>n).sort(()=>Math.random()-.5);renderStations();renderLesson();renderQuestion();$("stationBadge").textContent=`Station ${i+1} / 5`; $("position").textContent=`位置：第 ${i+1} 站`; $("guideText").innerHTML=`Let's learn ${stations[i].name}!<small>我們來學習：${stations[i].zh}！</small>`}
+function renderLesson(){let s=stations[currentStation];$("lessonTitle").textContent=`Station ${currentStation+1}: ${s.name}`;$("lessonZh").textContent=`第 ${currentStation+1} 站：${s.zh}`;$("lessonIntro").textContent=s.intro;$("lessonTranslation").textContent=s.introZh;$("stationProgress").style.width=(completed.includes(currentStation)?100:0)+"%"}
+function renderQuestion(){let s=stations[currentStation],q=s.qs[order[qIndex]];$("next").onclick=nextQuestion;$("qCount").textContent=`QUESTION ${qIndex+1} / 4`;$("question").textContent=q[0];$("questionZh").textContent=q[1];$("answers").innerHTML="";$("feedback").textContent="";$("feedback").className="feedback";$("hintText").textContent="";$("next").disabled=true;$("next").textContent=qIndex===3?"完成本關 Finish":"下一題 Next →";q[2].forEach((a,i)=>{let b=document.createElement("button");b.className="option";b.textContent=String.fromCharCode(65+i)+". "+a;b.onclick=()=>answer(i,b);$("answers").appendChild(b)});$("stationProgress").style.width=(qIndex/4*100)+"%"}
+function answer(choice,btn){if($("next").disabled===false)return;let q=stations[currentStation].qs[order[qIndex]],buttons=[...$("answers").children],isCorrect=choice===q[3];buttons.forEach(b=>b.disabled=true);answered++;answeredIds.push(`${currentStation}-${order[qIndex]}`);if(isCorrect){correct++;score+=10;btn.classList.add("correct");$("feedback").textContent="Correct! "+q[4];$("feedback").className="feedback good"}else{btn.classList.add("wrong");buttons[q[3]].classList.add("correct");$("feedback").textContent="Not quite. "+q[4];$("feedback").className="feedback bad";mistakes.unshift({station:stations[currentStation].name,q:q[0],zh:q[1],chosen:q[2][choice],answer:q[2][q[3]],why:q[4]});renderMistakes()}answerLog.push({time:new Date().toLocaleString(),station:stations[currentStation].name,stationZh:stations[currentStation].zh,questionNo:qIndex+1,question:q[0],questionZh:q[1],choices:q[2].join(" / "),studentAnswer:q[2][choice],correctAnswer:q[2][q[3]],isCorrect:isCorrect?"正確":"錯誤",explanation:q[4],scoreEarned:isCorrect?10:0});$("next").disabled=false;updateStats();save();safeSet("wfqAnswerLog",JSON.stringify(answerLog))}
+function nextQuestion(){if(qIndex<3){qIndex++;renderQuestion()}else{if(!completed.includes(currentStation))completed.push(currentStation);save();renderStations();$("stationProgress").style.width="100%";$("qCount").textContent="STATION COMPLETE";$("question").textContent="Station Complete!";$("questionZh").textContent="關卡完成！你已完成這一站的 4 題。";$("answers").innerHTML="";$("feedback").textContent="Great work! 做得好！";$("feedback").className="feedback good";$("hintText").textContent="你可以重玩本關，或前往下一站。";$("next").disabled=false;$("next").textContent="前往下一站 →";$("next").onclick=()=>{if(currentStation===stations.length-1){$("question").textContent="All stations complete!";$("questionZh").textContent="恭喜完成全部五站！請匯出答題紀錄交給老師。";$("next").textContent="匯出答題紀錄";$("next").onclick=exportPdf;}else{selectStation(currentStation+1)}};$("guideText").innerHTML=`Great work! Station complete.<small>做得好！這一站完成了。</small>`;}}
+function updateStats(){let total=answeredIds.length;$("progress").textContent=`${Math.min(total,20)} / 20`;$("accuracy").textContent=answered?Math.round(correct/answered*100)+"%":"—";$("score").textContent=score}
+function escHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function exportPdf(){if(!answerLog.length){alert("目前還沒有答題紀錄。請先完成至少一題。");return}
+const rows=answerLog.map((r,i)=>`<tr><td>${i+1}</td><td>${escHtml(r.time)}</td><td>${escHtml(r.station)}<br>${escHtml(r.stationZh)}</td><td>${r.questionNo}</td><td>${escHtml(r.question)}<br><span class="zh">${escHtml(r.questionZh)}</span></td><td>${escHtml(r.studentAnswer)}</td><td>${escHtml(r.correctAnswer)}</td><td class="${r.isCorrect==="正確"?"ok":"bad"}">${r.isCorrect}</td><td>${escHtml(r.explanation)}</td><td>${r.scoreEarned}</td></tr>`).join("");
+const right=answerLog.filter(r=>r.isCorrect==="正確").length;
+const html=`<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><title>Wafer Foundry Quest 答題報告</title><style>body{font-family:Arial,"Noto Sans TC",sans-serif;color:#17283c;margin:24px}h1{font-size:22px;margin-bottom:4px}p{margin:4px 0 16px;color:#44566b}.summary{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0 20px}.summary span{padding:8px 12px;background:#eef5fb;border:1px solid #cadceb;border-radius:6px}table{border-collapse:collapse;width:100%;font-size:10pt}th,td{border:1px solid #aab8c7;padding:7px;vertical-align:top;text-align:left;overflow-wrap:anywhere}th{background:#e8f2fb}.zh{color:#52657a}.ok{color:#087b45;font-weight:bold}.bad{color:#b52b34;font-weight:bold}.actions{margin-bottom:18px}button{padding:9px 14px;background:#176fc2;color:white;border:0;border-radius:6px;font-weight:bold}@media print{.actions{display:none}body{margin:10mm}thead{display:table-header-group}tr{break-inside:avoid}}</style></head><body><div class="actions"><button onclick="window.print()">列印／另存為 PDF</button> <span>請在列印視窗選擇「另存為 PDF」。</span></div><h1>Wafer Foundry Quest｜答題紀錄報告</h1><p>匯出時間：${escHtml(new Date().toLocaleString())}</p><div class="summary"><span>作答題數：${answerLog.length}</span><span>正確題數：${right}</span><span>正確率：${Math.round(right/answerLog.length*100)}%</span><span>總得分：${answerLog.reduce((n,r)=>n+r.scoreEarned,0)}</span></div><table><thead><tr><th>#</th><th>作答時間</th><th>關卡</th><th>題號</th><th>題目</th><th>學生答案</th><th>正確答案</th><th>結果</th><th>解說</th><th>分數</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>setTimeout(()=>window.print(),400)<\/script></body></html>`;
+const win=window.open("","_blank");if(!win){alert("瀏覽器封鎖了報告視窗，請允許此檔案開啟新視窗後再試。");return}win.document.open();win.document.write(html);win.document.close()}
+function renderWords(){let all=Object.keys(vocab);$("words").innerHTML=all.map(w=>`<div class="quiz"><b>${w}</b> <button class="secondary mini" data-say="${w}">🔊 聽發音</button><div>${vocab[w][0]}｜${vocab[w][1]}</div><div class="muted mini">搭配：${vocab[w][2]}</div><div>例句：${vocab[w][3]}</div><div class="muted mini">中文：${vocab[w][3]==="The wafer is round."?"晶圓是圓的。":"點擊喇叭可聽英文例句。"}</div><button class="secondary mini" data-say="${vocab[w][3]}">🔊 聽例句</button></div>`).join("");document.querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>speak(b.dataset.say))}
+function renderMistakes(){$("mistakeList").innerHTML=mistakes.length?mistakes.map((m,i)=>`<div class="quiz"><b>${i+1}. ${m.q}</b><div>${m.zh}</div><div class="feedback bad">你的答案：${m.chosen}</div><div class="feedback good">正確答案：${m.answer}</div><div class="muted">${m.why}</div><button class="secondary mini" data-msay="${m.q}">🔊 聽題目</button></div>`).join(""):"目前沒有錯題。";document.querySelectorAll("[data-msay]").forEach(b=>b.onclick=()=>speak(b.dataset.msay))}
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));["learn","dictionary","mistakes"].forEach(t=>$(t).classList.toggle("hidden",t!==activeTab))});
+$("exportPdf").onclick=exportPdf;$("next").onclick=nextQuestion;$("hint").onclick=()=>{const hints=[
+["Think about the basic shape of the object used to make chips. 想想製作晶片時所用物件的基本形狀。","Look for a word that means the opposite of “thick”. 想想和 thick 相反的字。","What verb means to put material onto a surface? 想想表示把材料放到表面上的動詞。","Check the subject: “The wafer” is one thing. 注意主詞是單數。"],
+["Which thing can affect a light-sensitive material? 想想什麼會影響對光敏感的材料。","Choose a word for a design you can see. 想想表示可看見的設計的字。","It is used during the light step to block some areas. 它在曝光步驟中用來遮住部分區域。","Choose a word that can describe a color or appearance after “is”. 選擇可放在 is 後描述外觀的字。"],
+["Think about what the process takes away from the surface. 想想這個製程會從表面拿走什麼。","A shape is something you can draw. 想想可以畫出來的東西。","Choose an action word, not a color or shape. 選動作，不是顏色或形狀。","Which word tells where something is located? 想想表示位置的字。"],
+["Think about what is added to change the material. 想想為了改變材料會加入什麼。","Choose a verb meaning “make different”. 選擇表示「使不同」的動詞。","It is what something is made from. 想想物品由什麼製成。","Choose a word that means the opposite of “large”. 選擇和 large 相反的字。"],
+["Think about the result on the wafer’s top. 想想晶圓表面最後會變成什麼狀態。","It is the outside or top of an object. 想想物件的外側或頂部。","A chip is part of an electronic device. 想想電子裝置裡的小型元件。","Choose a word that describes a smooth, level surface. 選擇描述平整表面的形容詞。"]];
+$("hintText").textContent=hints[currentStation][qIndex]||"Read the lesson again and look for a related idea. 重讀本關介紹，找找相關概念。";};$("hearQuestion").onclick=()=>{const q=stations[currentStation].qs[order[qIndex]][0];speak(q.replace(/_+/g," blank "));};$("speakGuide").onclick=()=>speak(stations[currentStation].intro);$("interact").onclick=()=>{if(activeTab!=="learn"){document.querySelector('[data-tab="learn"]').click()}else speak(stations[currentStation].name+". "+stations[currentStation].intro)};$("startStation").onclick=()=>selectStation(currentStation);$("reviewLesson").onclick=()=>{let s=stations[currentStation];speak(s.name+". "+s.intro)};
+$("clearMistakes").onclick=()=>{mistakes=[];save();renderMistakes()};
+function move(dir){if(dir==="up")playerY=Math.max(-1,playerY-1);if(dir==="down")playerY=Math.min(1,playerY+1);if(dir==="left")playerX=Math.max(-2,playerX-1);if(dir==="right")playerX=Math.min(2,playerX+1);if(dir==="interact"){$("interact").click();return}let positions=["入口","第一區","第二區","第三區","第四區","第五區"];let p=Math.max(0,Math.min(4,playerX+2));$("position").textContent=`位置：${positions[p+1]}（${playerX}, ${playerY}）`;if(playerX>=-2&&playerX<=2)selectStation(p);$("player").style.transform=`translate(${playerX*8}px,${playerY*5}px)`}
+document.addEventListener("keydown",e=>{let k=e.key.toLowerCase();if(["w","a","s","d","arrowup","arrowdown","arrowleft","arrowright","e"].includes(k)){if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();let map={w:"up",arrowup:"up",s:"down",arrowdown:"down",a:"left",arrowleft:"left",d:"right",arrowright:"right",e:"interact"};move(map[k])}});
+document.querySelectorAll("[data-move]").forEach(b=>{let fn=()=>move(b.dataset.move);b.addEventListener("click",fn)});
+renderStations();selectStation(0);renderWords();renderMistakes();updateStats();
+try{const testKey="wfq_storage_test";window.localStorage.setItem(testKey,"1");window.localStorage.removeItem(testKey)}catch(e){const note=document.createElement("p");note.textContent="注意：此瀏覽器限制本機儲存，重新整理後紀錄可能消失；請完成後立即匯出 PDF。";note.style.cssText="color:#ffe5a3;text-align:center;padding:0 14px";document.body.appendChild(note)}
+</script>
+</body></html>
