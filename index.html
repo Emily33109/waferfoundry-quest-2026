@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>產線危機：英文文法能力分級測驗</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030712;
+            --panel-bg: #0b1329;
+            --border-color: #00f0ff;
+            --text-main: #e2e8f0;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Noto Sans TC', 'JetBrains Mono', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.25);
+            padding: 35px;
+            margin: 20px;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        #login-screen h1 {
+            color: var(--border-color);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+        }
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 35px;
+            font-size: 1rem;
+        }
+        .form-group {
+            margin-bottom: 22px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--border-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+        }
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            background: #020617;
+            border: 1px solid #1e3a8a;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1.05rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--border-color);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.15rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+            margin-top: 25px;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #0369a1, #0284c7);
+            box-shadow: 0 6px 22px rgba(0, 240, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1e3a8a;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+        }
+        .status-box span {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        /* 紅色系 HP 條 (良率) */
+        .hp-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            background: #110508;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #7f1d1d;
+        }
+        .hp-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #fca5a5;
+            white-space: nowrap;
+        }
+        .hp-bar-container {
+            flex-grow: 1;
+            height: 12px;
+            background: #1f1215;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #991b1b;
+        }
+        .hp-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+
+        /* 藍綠色倒數時間條 */
+        .timer-container {
+            width: 100%;
+            height: 8px;
+            background: #020617;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid #1e3a8a;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: #38bdf8;
+            transition: width 1s linear, background-color 0.3s ease;
+        }
+
+        @keyframes alarmPulse {
+            0% { border-color: var(--border-color); box-shadow: 0 0 25px rgba(0, 240, 255, 0.2); }
+            50% { border-color: var(--accent-red); box-shadow: 0 0 45px rgba(239, 68, 68, 0.8); background: #180507; }
+            100% { border-color: var(--border-color); box-shadow: 0 0 25px rgba(0, 240, 255, 0.2); }
+        }
+        .container.alarm {
+            animation: alarmPulse 0.8s infinite;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            color: #f8fafc;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 18px;
+            border-left: 4px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            background: #0f172a;
+            border: 1px solid #3b82f6;
+            color: var(--text-main);
+            padding: 15px 18px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 1.05rem;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: #1e3a8a;
+            border-color: var(--border-color);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            transform: translateX(4px);
+        }
+        .option-btn.selected {
+            background: #1d4ed8 !important;
+            border-color: #60a5fa !important;
+            color: #fff !important;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+        .option-btn.correct {
+            background: rgba(16, 185, 129, 0.25) !important;
+            border-color: var(--accent-green) !important;
+            color: #34d399 !important;
+        }
+        .option-btn.wrong {
+            background: rgba(239, 68, 68, 0.25) !important;
+            border-color: var(--accent-red) !important;
+            color: #f87171 !important;
+        }
+
+        .scramble-area {
+            margin-bottom: 20px;
+        }
+        .answer-dropzone {
+            min-height: 65px;
+            background: #020617;
+            border: 2px dashed #3b82f6;
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .word-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .word-chip {
+            background: #1e293b;
+            border: 1px solid #3b82f6;
+            color: #60a5fa;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .word-chip:hover {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .result-summary {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .result-summary h2 {
+            color: var(--accent-green);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #020617;
+            border: 1px solid #1e3a8a;
+            padding: 14px 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .stat-card .num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--border-color);
+            margin-top: 4px;
+        }
+
+        .error-table-container {
+            max-height: 260px;
+            overflow-y: auto;
+            border: 1px solid #1e3a8a;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            background: #020617;
+            text-align: left;
+        }
+        .error-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .error-table th, .error-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .error-table th {
+            background: #0f172a;
+            color: var(--border-color);
+            font-family: 'Orbitron', sans-serif;
+            position: sticky;
+            top: 0;
+        }
+        .no-error {
+            text-align: center;
+            padding: 30px;
+            color: var(--accent-green);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        /* 針對列印 PDF 優化排版 */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+            .container {
+                border: none !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .btn, .game-header, .timer-container, .hp-section {
+                display: none !important;
+            }
+            .error-table-container {
+                max-height: none !important;
+                overflow: visible !important;
+                border: 1px solid #ccc !important;
+            }
+            .error-table th {
+                background: #f1f5f9 !important;
+                color: #000 !important;
+            }
+            .error-table td {
+                border-bottom: 1px solid #ddd !important;
+                color: #333 !important;
+            }
+            .stat-card {
+                background: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                color: #000 !important;
+            }
+            .stat-card .num {
+                color: #0284c7 !important;
+            }
+            .stat-card .label {
+                color: #475569 !important;
+            }
+            .result-summary h2 {
+                color: #059669 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-container">
+        <!-- 1. 登入畫面 -->
+        <div id="login-screen" class="screen active">
+            <h1>Wafer Line Crisis</h1>
+            <p class="subtitle">半導體晶片製作｜英文文法能力分級測驗</p>
+            <div class="form-group">
+                <label for="student-id">學號 (Student ID)</label>
+                <input type="text" id="student-id" placeholder="請輸入您的學號" required>
+            </div>
+            <div class="form-group">
+                <label for="student-name">姓名 (Name)</label>
+                <input type="text" id="student-name" placeholder="請輸入您的姓名" required>
+            </div>
+            <button class="btn" onclick="startCrisisGame()">進入產線防衛戰</button>
+        </div>
+
+        <!-- 2. 遊戲進行畫面 -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="status-box">題目: <span id="current-q-num">1</span> / 20</div>
+                <div class="status-box">得分: <span id="score-val">0</span></div>
+            </div>
+
+            <!-- 紅色系 HP 條 (良率) -->
+            <div class="hp-section">
+                <div class="hp-label">晶圓良率 HP: <span id="yield-val">100</span>%</div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar-fill" id="hp-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- 藍綠色倒數時間條 -->
+            <div class="timer-container">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+
+            <div class="question-text" id="q-text">載入題目中...</div>
+
+            <!-- 選擇題區塊 -->
+            <div class="options-grid" id="options-grid"></div>
+
+            <!-- 句子重組區塊 -->
+            <div class="scramble-area" id="scramble-area" style="display: none;">
+                <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:8px; font-family:'Orbitron';">請點擊下方單字進行排列：</div>
+                <div class="answer-dropzone" id="answer-dropzone">
+                    <span style="color: #475569; font-size: 0.95rem;">點擊下方單字組裝句子...</span>
+                </div>
+                <div class="word-pool" id="word-pool"></div>
+            </div>
+
+            <!-- 確認按鈕 -->
+            <button class="btn" id="action-btn" onclick="handleAction()" style="margin-top: 15px;">確認並鎖定答案</button>
+        </div>
+
+        <!-- 3. 結算畫面 -->
+        <div id="result-screen" class="screen">
+            <div class="result-summary">
+                <h2>Placement Test 測驗結算報告</h2>
+                <p id="student-info-display" style="color: #94a3b8; font-family: 'JetBrains Mono'; margin-top: 5px;"></p>
+            </div>
+
+            <!-- 各難度答對題數與綜合表現 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">初級 Beginner</div>
+                    <div class="num" id="stat-beginner">0 / 10</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">中級 Intermediate</div>
+                    <div class="num" id="stat-intermediate">0 / 8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">高級 Advanced</div>
+                    <div class="num" id="stat-advanced">0 / 2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">最終良率 / 總分</div>
+                    <div class="num" id="stat-yield-score" style="font-size: 1.1rem;">100%</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--border-color);">錯題訂正與解析記錄</h3>
+            <div class="error-table-container">
+                <table class="error-table" id="error-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>難度</th>
+                            <th>你的答案</th>
+                            <th>正確答案</th>
+                            <th>文法解析</th>
+                        </tr>
+                    </thead>
+                    <tbody id="error-tbody"></tbody>
+                </table>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <button class="btn" onclick="exportPDF()" style="background: linear-gradient(135deg, #059669, #047857); margin-top: 0;">📥 下載/列印 PDF 成績單</button>
+                <button class="btn" onclick="copyErrorTable()" style="margin-top: 0;">📋 一鍵複製錯題表</button>
+            </div>
+            <button class="btn" style="background: linear-gradient(135deg, #334155, #1e293b); margin-top: 12px;" onclick="location.reload()">重新挑戰產線</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { id: 1, type: "choice", level: "beginner", text: "Thin film deposition ___ specific areas of the wafer. (薄膜沉積會將材料沉積在晶圓的特定區域。)", options: ["A. deposit", "B. deposits", "C. depositing", "D. deposited"], correctIndex: 1, explanation: "句子描述一般製程事實用現在簡單式，主詞單數動詞加s為 deposits。" },
+            { id: 2, type: "choice", level: "beginner", text: "The five core steps of semiconductor manufacturing ___ several important processes. (半導體製造五核心步驟包含數個重要製程。)", options: ["A. includes", "B. including", "C. include", "D. included"], correctIndex: 2, explanation: "主詞 The five core steps 是複數，使用原形動詞 include。" },
+            { id: 3, type: "choice", level: "intermediate", text: "The wafer ___ several processing steps so far. (到目前為止，這片晶圓已完成好幾個製程。)", options: ["A. have completed", "B. has completed", "C. completing", "D. complete"], correctIndex: 1, explanation: "So far 搭配現在完成式，主詞單數用 has completed。" },
+            { id: 4, type: "scramble", level: "beginner", text: "請排列正確句子：晶圓必須保持清潔，以防止受到污染。", words: ["The wafer", "must", "be kept clean", "to prevent contamination"], correctString: "The wafer must be kept clean to prevent contamination", explanation: "Must 後接原形動詞，被動語態結構 must + be + 過去分詞。" },
+            { id: 5, type: "choice", level: "beginner", text: "___ the photolithography process use light to transfer circuit patterns? (微影製程會利用光線來轉移電路圖案嗎？)", options: ["A. Do", "B. Does", "C. Did", "D. Doing"], correctIndex: 1, explanation: "主詞 the photolithography process 是單數，現在簡單式疑問句使用 Does。" },
+            { id: 6, type: "choice", level: "intermediate", text: "The technician made the machine ___ before cleaning the wafer. (技術人員讓機器在清潔晶圓之前停止運轉。)", options: ["A. stopping", "B. stopped", "C. to stop", "D. stop"], correctIndex: 3, explanation: "使役動詞 make 主動語態後接原形動詞 stop。" },
+            { id: 7, type: "choice", level: "beginner", text: "Engineers use photolithography ___ circuit patterns onto the wafer. (工程師使用微影技術將電路圖案轉移到晶圓上。)", options: ["A. transfer", "B. transferred", "C. transferring", "D. to transfer"], correctIndex: 3, explanation: "To + 原形動詞用以表示目的。" },
+            { id: 8, type: "choice", level: "intermediate", text: "Before etching begins, engineers ___ check that the photoresist pattern is correct. (蝕刻前工程師應檢查光阻圖案是否正確。)", options: ["A. should", "B. ought", "C. must to", "D. can to"], correctIndex: 0, explanation: "Should 表示建議，後面直接接原形動詞 should check。" },
+            { id: 9, type: "scramble", level: "advanced", text: "請排列正確句子：如果當時光阻塗布得更均勻，圖案就會更清晰。", words: ["If the photoresist", "had been applied evenly,", "the pattern", "would have been clearer."], correctString: "If the photoresist had been applied evenly, the pattern would have been clearer.", explanation: "第三類條件句：If + had + 過去分詞, 主詞 + would have + 過去分詞。" },
+            { id: 10, type: "choice", level: "beginner", text: "___ the engineer clean the wafer before the next process yesterday? (工程師昨天在進行下一步前有清潔晶圓嗎？)", options: ["A. Does", "B. Do", "C. Did", "D. Has"], correctIndex: 2, explanation: "Yesterday 表示過去時間，使用 Did + 主詞 + 原形動詞。" },
+            { id: 11, type: "choice", level: "beginner", text: "The engineers ___ the cause of the equipment failure yesterday. (工程師昨天找出了設備故障原因。)", options: ["A. identify", "B. identifies", "C. identified", "D. identifying"], correctIndex: 2, explanation: "Yesterday 表示過去時間，規則動詞 identify 過去式為 identified。" },
+            { id: 12, type: "choice", level: "intermediate", text: "The wafer ___ inside the chamber when the alarm sounded. (警報響起時，晶圓正在腔體內被處理。)", options: ["A. processed", "B. was being processed", "C. has been processed", "D. is processing"], correctIndex: 1, explanation: "過去進行式被動語態：was/were + being + 過去分詞。" },
+            { id: 13, type: "scramble", level: "intermediate", text: "請排列正確句子：如果晶圓受到污染，製程可能會失敗。", words: ["If the wafer is contaminated,", "the process", "may fail."], correctString: "If the wafer is contaminated, the process may fail.", explanation: "第一類條件句：If + 現在簡單式被動, 主句 + may + 原形動詞。" },
+            { id: 14, type: "choice", level: "beginner", text: "During routine production, engineers ___ the wafer surface before moving to the next step. (例行生產期間工程師通常會檢查晶圓表面。)", options: ["A. usually check", "B. check usually", "C. usual check", "D. usually checks"], correctIndex: 0, explanation: "頻率副詞 usually 放在複數主詞 engineers 的動詞原形前。" },
+            { id: 15, type: "scramble", level: "advanced", text: "請排列正確句子：如果工程師能更好地控制溫度、晶圓就會有較少的缺陷。", words: ["If engineers controlled", "the temperature better,", "the wafer", "would have fewer defects."], correctString: "If engineers controlled the temperature better, the wafer would have fewer defects.", explanation: "第二類條件句：If + 過去式 (controlled)，主句 + would + 原形動詞。" },
+            { id: 16, type: "scramble", level: "intermediate", text: "請排列正確句子：氣態前驅物在其中發生反應的反應腔體會用於化學氣相沉積。", words: ["The reaction chamber", "where gaseous precursors react", "is used in CVD."], correctString: "The reaction chamber where gaseous precursors react is used in CVD.", explanation: "Where 引導關係副詞子句修飾地點 the reaction chamber。" },
+            { id: 17, type: "choice", level: "beginner", text: "___ the wafer surface helps remove unwanted material. (研磨晶圓表面有助於去除不需要的材料。)", options: ["A. Polish", "B. Polished", "C. Polishing", "D. To polishing"], correctIndex: 2, explanation: "動名詞片語 Polishing the wafer surface 作為主詞。" },
+            { id: 18, type: "choice", level: "beginner", text: "Engineers avoid ___ the wafer with dirty tools. (工程師會避免使用不乾淨工具操作晶圓。)", options: ["A. handle", "B. to handle", "C. handling", "D. handled"], correctIndex: 2, explanation: "動詞 avoid 後面須接動名詞 (avoid + V-ing)。" },
+            { id: 19, type: "choice", level: "intermediate", text: "CMP combines chemical and mechanical action, ___ flattens the wafer surface. (化學機械研磨結合作用，使晶圓表面平坦化。)", options: ["A. who", "B. which", "C. where", "D. what"], correctIndex: 1, explanation: "Which 引導非限定關係子句補充說明前面的 CMP。" },
+            { id: 20, type: "choice", level: "intermediate", text: "The photoresist ___ protects the wafer surface is removed after etching. (保護晶圓表面的光阻會在蝕刻後被移除。)", options: ["A. who", "B. where", "C. that", "D. what"], correctIndex: 2, explanation: "That 引導限定關係子句，在此作主詞。" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let yieldRate = 100;
+        let timer = null;
+        let timeLeft = 15;
+        let userRecords = [];
+        let studentData = { id: '', name: '' };
+        
+        let selectedChoiceIndex = null;
+        let userScrambleWords = [];
+        let availableScrambleWords = [];
+        let isAnswerLocked = false;
+
+        let audioCtx = null;
+        let bgmInterval = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(500, now);
+                    gain.gain.setValueAtTime(0.04, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.setValueAtTime(90, now + 0.12);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {}
+        }
+
+        function startBGM() {
+            initAudio();
+            if (bgmInterval) clearInterval(bgmInterval);
+            
+            const bassNotes = [110, 110, 146.83, 130.81, 98, 98, 123.47, 110];
+            let noteIdx = 0;
+
+            bgmInterval = setInterval(() => {
+                if (!audioCtx || audioCtx.state !== 'running') return;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(bassNotes[noteIdx], audioCtx.currentTime);
+                    
+                    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+
+                    noteIdx = (noteIdx + 1) % bassNotes.length;
+                } catch (e) {}
+            }, 300);
+        }
+
+        function stopBGM() {
+            if (bgmInterval) {
+                clearInterval(bgmInterval);
+                bgmInterval = null;
+            }
+        }
+
+        function updateHPBar() {
+            document.getElementById('yield-val').textContent = yieldRate;
+            const hpFill = document.getElementById('hp-bar-fill');
+            hpFill.style.width = yieldRate + '%';
+        }
+
+        function startCrisisGame() {
+            const idInput = document.getElementById('student-id').value.trim();
+            const nameInput = document.getElementById('student-name').value.trim();
+
+            if (!idInput || !nameInput) {
+                alert('請先輸入您的學號與姓名！');
+                return;
+            }
+
+            studentData.id = idInput;
+            studentData.name = nameInput;
+
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+
+            currentQuestionIndex = 0;
+            score = 0;
+            yieldRate = 100;
+            userRecords = [];
+            updateHPBar();
+
+            startBGM();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endGame();
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            isAnswerLocked = false;
+            selectedChoiceIndex = null;
+            userScrambleWords = [];
+
+            document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
+            document.getElementById('score-val').textContent = score;
+            document.getElementById('q-text').textContent = q.text;
+            updateHPBar();
+
+            const actionBtn = document.getElementById('action-btn');
+            actionBtn.textContent = "確認並鎖定答案";
+            actionBtn.disabled = false;
+
+            const optionsGrid = document.getElementById('options-grid');
+            const scrambleArea = document.getElementById('scramble-area');
+
+            if (q.type === 'choice') {
+                optionsGrid.style.display = 'grid';
+                scrambleArea.style.display = 'none';
+                optionsGrid.innerHTML = '';
+
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => {
+                        if (isAnswerLocked) return;
+                        playSound('click');
+                        selectedChoiceIndex = idx;
+                        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                    };
+                    optionsGrid.appendChild(btn);
+                });
+            } else {
+                optionsGrid.style.display = 'none';
+                scrambleArea.style.display = 'block';
+                
+                availableScrambleWords = [...q.words];
+                do {
+                    availableScrambleWords.sort(() => Math.random() - 0.5);
+                } while (availableScrambleWords.join(' ') === q.correctString && q.words.length > 1);
+
+                renderScramblePool();
+            }
+
+            startTimer();
+        }
+
+        function renderScramblePool() {
+            const dropzone = document.getElementById('answer-dropzone');
+            const pool = document.getElementById('word-pool');
+
+            dropzone.innerHTML = userScrambleWords.length === 0 
+                ? '<span style="color: #475569; font-size: 0.95rem;">點擊下方單字組裝句子...</span>' 
+                : '';
+
+            userScrambleWords.forEach((word, idx) => {
+                const chip = document.createElement('div');
+                chip.className = 'word-chip';
+                chip.style.borderColor = '#10b981';
+                chip.style.color = '#34d399';
+                chip.textContent = word;
+                chip.onclick = () => {
+                    if (isAnswerLocked) return;
+                    playSound('click');
+                    userScrambleWords.splice(idx, 1);
+                    availableScrambleWords.push(word);
+                    renderScramblePool();
+                };
+                dropzone.appendChild(chip);
+            });
+
+            pool.innerHTML = '';
+            availableScrambleWords.forEach((word, idx) => {
+                const chip = document.createElement('div');
+                chip.className = 'word-chip';
+                chip.textContent = word;
+                chip.onclick = () => {
+                    if (isAnswerLocked) return;
+                    playSound('click');
+                    availableScrambleWords.splice(idx, 1);
+                    userScrambleWords.push(word);
+                    renderScramblePool();
+                };
+                pool.appendChild(chip);
+            });
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 15;
+            const bar = document.getElementById('timer-bar');
+            const container = document.getElementById('main-container');
+            bar.style.width = '100%';
+            bar.style.backgroundColor = '#38bdf8';
+            container.classList.remove('alarm');
+
+            timer = setInterval(() => {
+                timeLeft--;
+                const pct = (timeLeft / 15) * 100;
+                bar.style.width = pct + '%';
+
+                if (timeLeft <= 5) {
+                    bar.style.backgroundColor = 'var(--accent-red)';
+                    container.classList.add('alarm');
+                    playSound('click');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    container.classList.remove('alarm');
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function handleTimeout() {
+            if (isAnswerLocked) return;
+            isAnswerLocked = true;
+            const q = questions[currentQuestionIndex];
+            yieldRate = Math.max(0, yieldRate - 10);
+            updateHPBar();
+            playSound('wrong');
+
+            let correctAnsStr = q.type === 'choice' ? q.options[q.correctIndex] : q.correctString;
+
+            userRecords.push({
+                num: currentQuestionIndex + 1,
+                level: q.level,
+                text: q.text.substring(0, 25) + '...',
+                userAns: '逾時未作答',
+                correctAns: correctAnsStr,
+                explanation: q.explanation,
+                isCorrect: false
+            });
+
+            if (yieldRate <= 0) {
+                alert('晶圓良率歸零！產線被迫停擺！');
+                endGame();
+                return;
+            }
+
+            document.getElementById('action-btn').textContent = "時間到！進入下一題";
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 1500);
+        }
+
+        function handleAction() {
+            const q = questions[currentQuestionIndex];
+            const actionBtn = document.getElementById('action-btn');
+
+            if (!isAnswerLocked) {
+                if (q.type === 'choice' && selectedChoiceIndex === null) {
+                    alert('請先選擇一個選項！');
+                    return;
+                }
+                if (q.type === 'scramble' && userScrambleWords.length === 0) {
+                    alert('請至少選擇單字排列句子！');
+                    return;
+                }
+
+                clearInterval(timer);
+                document.getElementById('main-container').classList.remove('alarm');
+                isAnswerLocked = true;
+
+                let isCorrect = false;
+                let userAnsStr = '';
+                let correctAnsStr = '';
+
+                if (q.type === 'choice') {
+                    userAnsStr = q.options[selectedChoiceIndex];
+                    correctAnsStr = q.options[q.correctIndex];
+                    isCorrect = (selectedChoiceIndex === q.correctIndex);
+
+                    const buttons = document.querySelectorAll('.option-btn');
+                    buttons.forEach((btn, idx) => {
+                        if (idx === q.correctIndex) {
+                            btn.classList.add('correct');
+                        } else if (idx === selectedChoiceIndex) {
+                            btn.classList.add('wrong');
+                        }
+                    });
+                } else {
+                    userAnsStr = userScrambleWords.join(' ');
+                    correctAnsStr = q.correctString;
+                    isCorrect = (userAnsStr === correctAnsStr);
+                }
+
+                if (isCorrect) {
+                    score += 100 + (timeLeft * 10);
+                    playSound('correct');
+                } else {
+                    yieldRate = Math.max(0, yieldRate - 10);
+                    playSound('wrong');
+                }
+
+                document.getElementById('score-val').textContent = score;
+                updateHPBar();
+
+                userRecords.push({
+                    num: currentQuestionIndex + 1,
+                    level: q.level,
+                    text: q.text.substring(0, 25) + '...',
+                    userAns: userAnsStr,
+                    correctAns: correctAnsStr,
+                    explanation: q.explanation,
+                    isCorrect: isCorrect
+                });
+
+                if (yieldRate <= 0) {
+                    alert('晶圓良率歸零！產線被迫停擺！');
+                    actionBtn.textContent = "產線停擺 - 檢視報告";
+                    actionBtn.onclick = endGame;
+                } else {
+                    actionBtn.textContent = "進入下一題 >>>";
+                }
+            } else {
+                if (yieldRate <= 0) {
+                    endGame();
+                } else {
+                    currentQuestionIndex++;
+                    loadQuestion();
+                }
+            }
+        }
+
+        function endGame() {
+            clearInterval(timer);
+            stopBGM();
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            document.getElementById('main-container').classList.remove('alarm');
+
+            document.getElementById('student-info-display').textContent = `學號: ${studentData.id} | 姓名: ${studentData.name}`;
+
+            // 計算各難度答對題數
+            let bCorrect = 0, bTotal = 10;
+            let iCorrect = 0, iTotal = 8;
+            let aCorrect = 0, aTotal = 2;
+
+            userRecords.forEach(r => {
+                if (r.isCorrect) {
+                    if (r.level === 'beginner') bCorrect++;
+                    else if (r.level === 'intermediate') iCorrect++;
+                    else if (r.level === 'advanced') aCorrect++;
+                }
+            });
+
+            document.getElementById('stat-beginner').textContent = `${bCorrect} / ${bTotal}`;
+            document.getElementById('stat-intermediate').textContent = `${iCorrect} / ${iTotal}`;
+            document.getElementById('stat-advanced').textContent = `${aCorrect} / ${aTotal}`;
+            document.getElementById('stat-yield-score').textContent = `${yieldRate}% / ${score}分`;
+
+            const tbody = document.getElementById('error-tbody');
+            tbody.innerHTML = '';
+
+            const wrongItems = userRecords.filter(r => !r.isCorrect);
+
+            if (wrongItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="no-error">太神啦！全數答對，良率 100% 完美出貨！</td></tr>`;
+                return;
+            }
+
+            wrongItems.forEach(item => {
+                let levelName = item.level === 'beginner' ? '初級' : (item.level === 'intermediate' ? '中級' : '高級');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${item.num}</td>
+                    <td><span style="font-size:0.8rem; padding:2px 6px; border-radius:4px; background:#1e293b; color:var(--border-color);">${levelName}</span></td>
+                    <td style="color: var(--accent-red);">${item.userAns}</td>
+                    <td style="color: var(--accent-green);">${item.correctAns}</td>
+                    <td style="font-size: 0.85rem; color: #cbd5e1;">${item.explanation}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function exportPDF() {
+            window.print();
+        }
+
+        function copyErrorTable() {
+            let bCorrect = 0, iCorrect = 0, aCorrect = 0;
+            userRecords.forEach(r => {
+                if (r.isCorrect) {
+                    if (r.level === 'beginner') bCorrect++;
+                    else if (r.level === 'intermediate') iCorrect++;
+                    else if (r.level === 'advanced') aCorrect++;
+                }
+            });
+
+            let textToCopy = `【產線危機：Placement Test 測驗成績單】\n學號：${studentData.id}\n姓名：${studentData.name}\n總分：${score}分 | 最終良率：${yieldRate}%\n\n--- 能力分級表現 ---\n初級 Beginner: ${bCorrect}/10\n中級 Intermediate: ${iCorrect}/8\n高級 Advanced: ${aCorrect}/2\n\n--- 錯題訂正記錄 ---\n`;
+            
+            const wrongItems = userRecords.filter(r => !r.isCorrect);
+            if (wrongItems.length === 0) {
+                textToCopy += "恭喜全數答對，無錯題！";
+            } else {
+                wrongItems.forEach(item => {
+                    textToCopy += `第 ${item.num} 題 [${item.level}] | 你的回答: ${item.userAns} | 正確答案: ${item.correctAns}\n解析: ${item.explanation}\n\n`;
+                });
+            }
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('成績與錯題表已成功複製到剪貼簿！');
+            }).catch(err => {
+                alert('複製失敗，請手動複製。');
+            });
+        }
+    </script>
+</body>
+</html>
