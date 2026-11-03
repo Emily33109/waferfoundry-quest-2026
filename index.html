@@ -466,13 +466,13 @@
         <!-- 2. 遊戲進行畫面 -->
         <div id="game-screen" class="screen">
             <div class="game-header">
-                <div class="status-box">題目: <span id="current-q-num">1</span> / 20</div>
-                <div class="status-box">得分: <span id="score-val">0</span></div>
+                <div class="status-box">Question: <span id="current-q-num">1</span> / 20</div>
+                <div class="status-box">Score: <span id="score-val">0</span></div>
             </div>
 
             <!-- 紅色系 HP 條 (良率) -->
             <div class="hp-section">
-                <div class="hp-label">晶圓良率 HP: <span id="yield-val">100</span>%</div>
+                <div class="hp-label">Wafer Yield HP: <span id="yield-val">100</span>%</div>
                 <div class="hp-bar-container">
                     <div class="hp-bar-fill" id="hp-bar-fill"></div>
                 </div>
@@ -483,16 +483,16 @@
                 <div class="timer-bar" id="timer-bar"></div>
             </div>
 
-            <div class="question-text" id="q-text">載入題目中...</div>
+            <div class="question-text" id="q-text">Loading...</div>
 
             <!-- 選擇題區塊 -->
             <div class="options-grid" id="options-grid"></div>
 
             <!-- 句子重組區塊 -->
             <div class="scramble-area" id="scramble-area" style="display: none;">
-                <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:8px; font-family:'Orbitron';">請點擊下方單字進行排列：</div>
+                <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:8px; font-family:'Orbitron';">Tap the words below to build the sentence:</div>
                 <div class="answer-dropzone" id="answer-dropzone">
-                    <span style="color: #475569; font-size: 0.95rem;">點擊下方單字組裝句子...</span>
+                    <span style="color: #475569; font-size: 0.95rem;">Tap words to build your sentence...</span>
                 </div>
                 <div class="word-pool" id="word-pool"></div>
             </div>
@@ -564,7 +564,7 @@
     <script>
         const questions = [
             { id: 1, type: "choice", level: "beginner", text: "Thin film deposition ___ specific areas of the wafer.", options: ["A. deposit", "B. deposits", "C. depositing", "D. deposited"], correctIndex: 1, explanation: "句子描述一般製程事實用現在簡單式，主詞單數動詞加s為 deposits。" },
-            { id: 2, type: "choice", level: "beginner", text: "The five core steps of semiconductor manufacturing ___ several important processes.", options: ["A. includes", "B. including", "C. include", "D. included"], correctIndex: 2, explanation: "主詞 The five core steps 是複數，使用原形動詞 include。" },
+            { id: 2, type: "choice", level: "beginner", text: "The five core steps of semiconductor manufacturing, together with several supporting procedures, ___ essential to production. ", options: ["A. is", "B. are", "C. was", "D. has been"], correctIndex: 2, explanation: "主詞 The five core steps 是複數，使用原形動詞 include。" },
             { id: 3, type: "choice", level: "intermediate", text: "The engineers ___ several processing steps so far.", options: ["A. has completed", "B. have completed", "C. completing", "D. complete"], correctIndex: 1, explanation: "So far 搭配現在完成式，主詞復數用 have completed。" },
             { id: 4, type: "choice", level: "beginner", text: "___ the photolithography process use light to transfer circuit patterns?", options: ["A. Do", "B. Does", "C. Did", "D. Doing"], correctIndex: 1, explanation: "主詞 the photolithography process 是單數，現在簡單式疑問句使用 Does。" },
             { id: 5, type: "choice", level: "intermediate", text: "The technician made the machine ___ before cleaning the wafer.", options: ["A. stopping", "B. stopped", "C. to stop", "D. stop"], correctIndex: 3, explanation: "使役動詞 make 主動語態後接原形動詞 stop。" },
@@ -578,13 +578,13 @@
             { id: 13, type: "choice", level: "beginner", text: "Engineers avoid ___ the wafer with dirty tools.", options: ["A. handle", "B. to handle", "C. handling", "D. handled"], correctIndex: 2, explanation: "動詞 avoid 後面須接動名詞 (avoid + V-ing)。" },
             { id: 14, type: "choice", level: "intermediate", text: "Chemical mechanical polishing (CMP) combines chemical and mechanical action, ___ flattens the wafer surface.", options: ["A. who", "B. which", "C. where", "D. what"], correctIndex: 1, explanation: "Which 引導非限定關係子句補充說明前面的 CMP。" },
             { id: 15, type: "choice", level: "intermediate", text: "The photoresist ___ protects the wafer surface is removed after etching.", options: ["A. who", "B. where", "C. that", "D. what"], correctIndex: 2, explanation: "That 引導限定關係子句，在此作主詞。" },
-            { id: 16, type: "scramble", level: "beginner", text: "Rearrange the words to make a correct sentence.", words: ["The wafer", "be kept clean", "must", "to prevent contamination"], correctString: "The wafer must be kept clean to prevent contamination", explanation: "Must 後接原形動詞，被動語態結構 must + be + 過去分詞。" },
-            { id: 17, type: "scramble", level: "advanced", text: "Rearrange the words to make a correct sentence.", words: ["If the photoresist", "had been applied evenly,", "the pattern", "would have been clearer."], correctString: "If the photoresist had been applied evenly, the pattern would have been clearer.", explanation: "第三類條件句：If + had + 過去分詞, 主詞 + would have + 過去分詞。" },
-            { id: 18, type: "scramble", level: "intermediate", text: "Rearrange the words to make a correct sentence.", words: ["If the wafer is contaminated,", "the process", "may fail."], correctString: "If the wafer is contaminated, the process may fail.", explanation: "第一類條件句：If + 現在簡單式被動, 主句 + may + 原形動詞。" },
-            { id: 19, type: "scramble", level: "advanced", text: "Rearrange the words to make a correct sentence.", words: ["the temperature better,", "If engineers controlled", "the wafer", "would have fewer defects."], correctString: "If engineers controlled the temperature better, the wafer would have fewer defects.", explanation: "第二類條件句：If + 過去式 (controlled)，主句 + would + 原形動詞。" },
-            { id: 20, type: "scramble", level: "intermediate", text: "Rearrange the words to make a correct sentence.", words: ["The reaction chamber", "where gaseous precursors react", "is used in CVD."], correctString: "The reaction chamber where gaseous precursors react is used in CVD.", explanation: "Where 引導關係副詞子句修飾地點 the reaction chamber。" }
+            { id: 16, type: "scramble", level: "beginner", text: "Rearrange the words to make a correct sentence.", words: ["must be", "the wafer", "contamination", "kept clean to prevent"], correctString: "The wafer must be kept clean to prevent contamination.", explanation: "Must 後接原形動詞，被動語態結構 must + be + 過去分詞。" },
+            { id: 17, type: "scramble", level: "advanced", text: "Rearrange the words to make a correct sentence.", words: ["would have", "If", "been clearer.", "the photoresist", "the pattern", "had been applied evenly,"], correctString: "If the photoresist had been applied evenly, the pattern would have been clearer.", explanation: "第三類條件句：If + had + 過去分詞, 主詞 + would have + 過去分詞。" },
+            { id: 18, type: "scramble", level: "intermediate", text: "Rearrange the words to make a correct sentence.", words: ["may", "If", "fail.", "the process", "the wafer is contaminated,"], correctString: "If the wafer is contaminated, the process may fail.", explanation: "第一類條件句：If + 現在簡單式被動, 主句 + may + 原形動詞。" },
+            { id: 19, type: "scramble", level: "advanced", text: "Rearrange the words to make a correct sentence.", words: ["would", "If engineers", "fewer defects.", "controlled", "the wafer", "the temperature better,"], correctString: "If engineers controlled the temperature better, the wafer would have fewer defects.", explanation: "第二類條件句：If + 過去式 (controlled)，主句 + would + 原形動詞。" },
+            { id: 20, type: "scramble", level: "intermediate", text: "Rearrange the words to make a correct sentence.", words: ["where", "is used", "The reaction", "in CVD.", "chamber", "gaseous precursors react"], correctString: "The reaction chamber where gaseous precursors react is used in CVD.", explanation: "Where 引導關係副詞子句修飾地點 the reaction chamber。" }
         ];
-
+        const norm = s => s.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
         let currentQuestionIndex = 0;
         let score = 0;
         let yieldRate = 100;
@@ -728,7 +728,7 @@
             updateHPBar();
 
             const actionBtn = document.getElementById('action-btn');
-            actionBtn.textContent = "確認並鎖定答案";
+            actionBtn.textContent = "Confirm Answer";
             actionBtn.disabled = false;
 
             const optionsGrid = document.getElementById('options-grid');
@@ -759,7 +759,7 @@
                 availableScrambleWords = [...q.words];
                 do {
                     availableScrambleWords.sort(() => Math.random() - 0.5);
-                } while (availableScrambleWords.join(' ') === q.correctString && q.words.length > 1);
+                                } while (norm(availableScrambleWords.join(' ')) === norm(q.correctString) && q.words.length > 1);
 
                 renderScramblePool();
             }
@@ -849,7 +849,7 @@
                 num: currentQuestionIndex + 1,
                 level: q.level,
                 text: q.text.substring(0, 25) + '...',
-                userAns: '逾時未作答',
+                userAns: 'No answer (time out)',
                 correctAns: correctAnsStr,
                 explanation: q.explanation,
                 isCorrect: false
@@ -861,7 +861,7 @@
                 return;
             }
 
-            document.getElementById('action-btn').textContent = "時間到！進入下一題";
+            document.getElementById('action-btn').textContent = "Time’s up! Next question...";
             setTimeout(() => {
                 currentQuestionIndex++;
                 loadQuestion();
@@ -874,11 +874,11 @@
 
             if (!isAnswerLocked) {
                 if (q.type === 'choice' && selectedChoiceIndex === null) {
-                    alert('請先選擇一個選項！');
+                    alert('Please choose an answer first!');
                     return;
                 }
                 if (q.type === 'scramble' && userScrambleWords.length === 0) {
-                    alert('請至少選擇單字排列句子！');
+                    alert('Please arrange the words first!');
                     return;
                 }
 
@@ -907,6 +907,8 @@
                     userAnsStr = userScrambleWords.join(' ');
                     correctAnsStr = q.correctString;
                     isCorrect = (userAnsStr === correctAnsStr);
+                    isCorrect = (norm(userAnsStr) === norm(correctAnsStr));
+                    
                 }
 
                 if (isCorrect) {
@@ -931,11 +933,11 @@
                 });
 
                 if (yieldRate <= 0) {
-                    alert('晶圓良率歸零！產線被迫停擺！');
-                    actionBtn.textContent = "產線停擺 - 檢視報告";
+                    alert('Yield dropped to 0%! The production line has shut down!');
+                    actionBtn.textContent = "Shutdown – View Report";
                     actionBtn.onclick = endGame;
                 } else {
-                    actionBtn.textContent = "進入下一題 >>>";
+                    actionBtn.textContent = "Next Question >>>";
                 }
             } else {
                 if (yieldRate <= 0) {
